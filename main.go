@@ -27,7 +27,12 @@ func getProdukByID(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/produk/")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid Produk ID", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "Error",
+			"message": "ID produk tidak valid",
+		})
 		return
 	}
 
@@ -40,8 +45,12 @@ func getProdukByID(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Kalau tidak found
-	http.Error(w, "Produk belum ada", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "Error",
+		"message": "ID produk tidak ditemukan",
+	})
 }
 
 // PUT localhost:8080/api/produk/{id}
@@ -52,7 +61,12 @@ func updateProduk(w http.ResponseWriter, r *http.Request) {
 	// ganti int
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid Produk ID", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "Error",
+			"message": "ID produk tidak valid",
+		})
 		return
 	}
 
@@ -60,7 +74,12 @@ func updateProduk(w http.ResponseWriter, r *http.Request) {
 	var updateProduk Produk
 	err = json.NewDecoder(r.Body).Decode(&updateProduk)
 	if err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "Error",
+			"message": "ID produk tidak valid",
+		})
 		return
 	}
 
@@ -76,7 +95,12 @@ func updateProduk(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Error(w, "Produk belum ada", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "Error",
+		"message": "ID produk tidak ditemukan",
+	})
 }
 
 func deleteProduk(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +110,12 @@ func deleteProduk(w http.ResponseWriter, r *http.Request) {
 	// ganti id int
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid Produk ID", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "Error",
+			"message": "ID produk tidak ditemukan",
+		})
 		return
 	}
 
@@ -104,7 +133,12 @@ func deleteProduk(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Error(w, "Produk belum ada", http.StatusNotFound)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusNotFound)
+	json.NewEncoder(w).Encode(map[string]string{
+		"status":  "Error",
+		"message": "ID produk tidak ditemukan",
+	})
 }
 
 func main() {
@@ -152,6 +186,23 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]string{
 			"status":  "OK",
 			"message": "API Running",
+		})
+	})
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(map[string]string{
+				"status":  "Error",
+				"message": "endpoint tidak ada",
+			})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "OK",
+			"message": "Pong!",
 		})
 	})
 
