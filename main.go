@@ -4,9 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	Port string `mapstructure:"PORT"`
+}
 
 type Produk struct {
 	ID    int    `json:"id"`
@@ -274,6 +281,13 @@ func deleteCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigFile(".env")
+		_ = viper.ReadInConfig()
+	}
 
 	/*
 		#################
@@ -411,9 +425,14 @@ func main() {
 		})
 	})
 
-	fmt.Println("Server running di localhost:8080")
+	config := Config{
+		Port: viper.GetString("PORT"),
+	}
 
-	err := http.ListenAndServe(":8080", nil)
+	addr := "0.0.0.0:" + config.Port
+	fmt.Println("Server running di", addr)
+
+	err := http.ListenAndServe(addr, nil)
 	if err != nil {
 		fmt.Println("gagal running server")
 	}
