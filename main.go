@@ -48,6 +48,10 @@ func main() {
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 
+	transactionRepo := repository.NewTransactionRepository(db)
+	transactionService := service.NewTransactionService(transactionRepo)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
+
 	/*
 		#################
 		#	Produk  	#
@@ -65,6 +69,14 @@ func main() {
 
 	http.HandleFunc("/api/categories", categoryHandler.HandleCategories)
 	http.HandleFunc("/api/categories/", categoryHandler.HandleCategoryByID)
+
+	/*
+		#################
+		#	Transaction	#
+		#################
+	*/
+
+	http.HandleFunc("/api/checkout", transactionHandler.HandleCheckout)
 
 	/*
 		#################
