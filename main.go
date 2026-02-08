@@ -52,6 +52,10 @@ func main() {
 	transactionService := service.NewTransactionService(transactionRepo)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
+	reportRepo := repository.NewReportRepository(db)
+	reportService := service.NewReportService(reportRepo)
+	reportHandler := handler.NewReportHandler(reportService)
+
 	/*
 		#################
 		#	Produk  	#
@@ -77,6 +81,14 @@ func main() {
 	*/
 
 	http.HandleFunc("/api/checkout", transactionHandler.HandleCheckout)
+
+	/*
+		#################
+		#	Report		#
+		#################
+	*/
+
+	http.HandleFunc("/api/report/hari-ini", reportHandler.GetDailyReport)
 
 	/*
 		#################

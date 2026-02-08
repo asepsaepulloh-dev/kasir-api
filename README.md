@@ -92,6 +92,59 @@ Update kategori
 **DELETE** `/api/categories/{id}`  
 Hapus kategori
 
+### Transactions
+
+**POST** `/api/checkout`  
+Checkout transaksi
+```json
+{
+  "items": [
+    {
+      "product_id": 1,
+      "quantity": 2
+    },
+    {
+      "product_id": 3,
+      "quantity": 1
+    }
+  ]
+}
+```
+
+Response:
+```json
+{
+  "id": 1,
+  "total_amount": 45000,
+  "details": [
+    {
+      "transaction_id": 1,
+      "product_id": 1,
+      "product_name": "Indomie Goreng",
+      "quantity": 2,
+      "subtotal": 7000
+    }
+  ]
+}
+```
+
+### Reports
+
+**GET** `/api/report/hari-ini`  
+Laporan transaksi hari ini
+
+Response:
+```json
+{
+  "total_revenue": 45000,
+  "total_transaksi": 5,
+  "produk_terlaris": {
+    "nama": "Indomie Goreng",
+    "qty_terjual": 12
+  }
+}
+```
+
 ### Health Check
 
 **GET** `/health`  
